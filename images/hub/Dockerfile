@@ -18,11 +18,14 @@ FROM registry.access.redhat.com/ubi8/python-311:1-25.1696515654 as build-stage
 # ephemeral docker cache (--mount=type=cache,target=${PIP_CACHE_DIR}). We use
 # the same technique for the directory /tmp/wheels.
 #
+WORKDIR /opt/app-root/src
+
 COPY requirements.txt requirements.txt
 ARG PIP_CACHE_DIR=/tmp/pip-cache
 RUN --mount=type=cache,target=${PIP_CACHE_DIR} \
-    pip install --upgrade pip \
-    && pip install build \
+    pip install --no-cache-dir --upgrade pip==23.3 \
+    # Figure out how to manage build and pip dependency
+    && pip install --no-cache-dir build==1.0.3 \
     && pip wheel \
     --wheel-dir=/tmp/wheels \
     -r requirements.txt \
@@ -48,22 +51,22 @@ USER root
 RUN useradd \
     --no-create-home \
     --system \
-    --uid ${NB_UID} \
-    --home-dir ${HOME} \
+    --uid "${NB_UID}" \
+    --home-dir "${HOME}" \
     --shell /bin/bash \
-    ${NB_USER}
+    "${NB_USER}"
 
 RUN yum update -y \
     && yum upgrade -y \
     && yum install -y --setopt=tsflags=nodocs \
     # requirement for pycurl
-    libcurl \
-    # requirement for using postgres database
-    postgresql-libs \
-    # requirement for using a local sqlite database
-    sqlite \
+    libcurl-7.61.1-30.el8_8.3 \
+    # requirement for using postgres database `postgresql-libs`
+    libpq-13.5-1.el8 \
+    # # requirement for using a local sqlite database
+    sqlite-3.26.0-18.el8_8 \
     # tini not available via yum
-    # tini \
+    # tini-0.16.1-1.el8ar \
     && rm -rf /var/cache/yum/*
 
 # install wheels built in the build stage
@@ -71,7 +74,9 @@ COPY requirements.txt /tmp/requirements.txt
 ARG PIP_CACHE_DIR=/tmp/pip-cache
 RUN --mount=type=cache,target=${PIP_CACHE_DIR} \
     --mount=type=cache,from=build-stage,source=/tmp/wheels,target=/tmp/wheels \
-    pip install \
+    pip install --no-cache-dir --upgrade pip==23.3 \
+    && pip install \
+    --no-cache-dir \
     --find-links=/tmp/wheels/ \
     -r /tmp/requirements.txt
 
@@ -98,6 +103,7 @@ ARG PIP_CACHE_DIR=/tmp/pip-cache
 RUN --mount=type=cache,target=${PIP_CACHE_DIR} \
     --mount=type=cache,from=build-stage,source=/tmp/wheels,target=/tmp/wheels \
     pip install \
+    --no-cache-dir \
     --find-links=/tmp/wheels/ \
     # Updates below should be repeated in build-stage.
     #
@@ -107,11 +113,12 @@ RUN --mount=type=cache,target=${PIP_CACHE_DIR} \
 RUN yum update -y \
     && yum upgrade -y \
     && yum install -y --setopt=tsflags=nodocs \
-    curl \
-    bind-utils \
-    git \
-    less \
-    vim \
+    curl-7.61.1-30.el8_8.3 \
+    bind-utils-32:9.11.36-8.el8_8.2 \
+    git-2.39.3-1.el8_8 \
+    less-530-1.el8 \
+    vim-common-2:8.0.1763-19.el8_6.4 \
+    vim-enhanced-2:8.0.1763-19.el8_6.4 \
     && rm -rf /var/cache/yum/*
 
 USER ${NB_USER}
