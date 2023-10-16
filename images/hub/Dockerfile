@@ -10,7 +10,7 @@
 # NOTE: If the image version is updated, also update it in ci/refreeze and
 #       singleuser-sample's Dockerfile!
 #
-FROM python:3.11-bullseye as build-stage
+FROM registry.access.redhat.com/ubi8/python-311:1-25.1696515654 as build-stage
 
 # Build wheels
 #
@@ -21,14 +21,15 @@ FROM python:3.11-bullseye as build-stage
 COPY requirements.txt requirements.txt
 ARG PIP_CACHE_DIR=/tmp/pip-cache
 RUN --mount=type=cache,target=${PIP_CACHE_DIR} \
-    pip install build \
- && pip wheel \
-        --wheel-dir=/tmp/wheels \
-        -r requirements.txt \
-        # Additional wheels for default-stage. Updates below should be repeated
-        # in default-stage.
-        #
-        py-spy
+    pip install --upgrade pip \
+    && pip install build \
+    && pip wheel \
+    --wheel-dir=/tmp/wheels \
+    -r requirements.txt \
+    # Additional wheels for default-stage. Updates below should be repeated
+    # in default-stage.
+    #
+    py-spy
 
 
 # The final stage - slim version
@@ -36,31 +37,34 @@ RUN --mount=type=cache,target=${PIP_CACHE_DIR} \
 # This stage is built and published as jupyterhub/k8s-hub-slim. It is meant to
 # provide no non-essential packages.
 #
-FROM python:3.11-slim-bullseye as slim-stage
-ENV DEBIAN_FRONTEND=noninteractive
+FROM registry.access.redhat.com/ubi8/python-311:1-25.1696515654 as slim-stage
 
 ARG NB_USER=jovyan \
     NB_UID=1000 \
     HOME=/home/jovyan
-RUN adduser \
-        --disabled-password \
-        --gecos "Default user" \
-        --uid ${NB_UID} \
-        --home ${HOME} \
-        --force-badname \
-        ${NB_USER}
 
-RUN apt-get update \
- && apt-get upgrade -y \
- && apt-get install -y --no-install-recommends \
-        # requirement for pycurl
-        libcurl4 \
-        # requirement for using postgres database
-        libpq5 \
-        # requirement for using a local sqlite database
-        sqlite3 \
-        tini \
- && rm -rf /var/lib/apt/lists/*
+USER root
+
+RUN useradd \
+    --no-create-home \
+    --system \
+    --uid ${NB_UID} \
+    --home-dir ${HOME} \
+    --shell /bin/bash \
+    ${NB_USER}
+
+RUN yum update -y \
+    && yum upgrade -y \
+    && yum install -y --setopt=tsflags=nodocs \
+    # requirement for pycurl
+    libcurl \
+    # requirement for using postgres database
+    postgresql-libs \
+    # requirement for using a local sqlite database
+    sqlite \
+    # tini not available via yum
+    # tini \
+    && rm -rf /var/cache/yum/*
 
 # install wheels built in the build stage
 COPY requirements.txt /tmp/requirements.txt
@@ -68,15 +72,16 @@ ARG PIP_CACHE_DIR=/tmp/pip-cache
 RUN --mount=type=cache,target=${PIP_CACHE_DIR} \
     --mount=type=cache,from=build-stage,source=/tmp/wheels,target=/tmp/wheels \
     pip install \
-        --find-links=/tmp/wheels/ \
-        -r /tmp/requirements.txt
+    --find-links=/tmp/wheels/ \
+    -r /tmp/requirements.txt
 
 WORKDIR /srv/jupyterhub
 RUN chown ${NB_USER}:${NB_USER} /srv/jupyterhub
 USER ${NB_USER}
 
 EXPOSE 8081
-ENTRYPOINT ["tini", "--"]
+# tini not available via microdnf
+# ENTRYPOINT ["tini", "--"]
 CMD ["jupyterhub", "--config", "/usr/local/etc/jupyterhub/jupyterhub_config.py"]
 
 
@@ -93,19 +98,20 @@ ARG PIP_CACHE_DIR=/tmp/pip-cache
 RUN --mount=type=cache,target=${PIP_CACHE_DIR} \
     --mount=type=cache,from=build-stage,source=/tmp/wheels,target=/tmp/wheels \
     pip install \
-        --find-links=/tmp/wheels/ \
-        # Updates below should be repeated in build-stage.
-        #
-        # py-spy is useful for profiling performance of running hubs
-        py-spy
+    --find-links=/tmp/wheels/ \
+    # Updates below should be repeated in build-stage.
+    #
+    # py-spy is useful for profiling performance of running hubs
+    py-spy
 
-RUN apt-get update \
- && apt-get install -y --no-install-recommends \
-        curl \
-        dnsutils \
-        git \
-        less \
-        vim \
- && rm -rf /var/lib/apt/lists/*
+RUN yum update -y \
+    && yum upgrade -y \
+    && yum install -y --setopt=tsflags=nodocs \
+    curl \
+    bind-utils \
+    git \
+    less \
+    vim \
+    && rm -rf /var/cache/yum/*
 
 USER ${NB_USER}
