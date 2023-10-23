@@ -1,5 +1,5 @@
 # compile the code to an executable using an intermediary image
-FROM golang:1.18
+FROM registry.access.redhat.com/ubi8/go-toolset@sha256:6c2c40207abfef2e46426f39c7fe0aca177b9da73d2b223bc0ddc7c5c56485c4 as builder
 
 # VULN_SCAN_TIME=
 
@@ -7,7 +7,7 @@ WORKDIR /build
 COPY *.mod \
      *.go \
      *.sum \
-     .
+     ./
 
 RUN CGO_ENABLED=0 GOOS=linux go build -ldflags '-w -s' -installsuffix cgo -a -o out/image-awaiter
 
