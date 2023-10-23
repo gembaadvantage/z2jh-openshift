@@ -7,7 +7,7 @@ WORKDIR /build
 COPY *.mod \
      *.go \
      *.sum \
-     .
+     ./
 
 RUN CGO_ENABLED=0 GOOS=linux go build -ldflags '-w -s' -installsuffix cgo -a -o out/image-awaiter
 
