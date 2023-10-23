@@ -23,7 +23,7 @@ WORKDIR /opt/app-root/src
 COPY requirements.txt requirements.txt
 ARG PIP_CACHE_DIR=/tmp/pip-cache
 RUN --mount=type=cache,target=${PIP_CACHE_DIR} \
-    pip install --no-cache-dir --upgrade pip==23.3 \
+    pip install --no-cache-dir --upgrade pip==23.3.* \
     # Figure out how to manage build and pip dependency
     && pip install --no-cache-dir build==1.0.3 \
     && pip wheel \
@@ -56,16 +56,17 @@ RUN useradd \
     --shell /bin/bash \
     "${NB_USER}"
 
-RUN dnf install -y --nodocs libcurl \
-    libpq \
-    sqlite
+RUN dnf install -y --nodocs libcurl-7.61.1-30.el8_8.3 \
+    libpq-13.5-1.el8 \
+    sqlite-3.26.0-18.el8_8 \
+    && dnf clean all
 
 # install wheels built in the build stage
 COPY requirements.txt /tmp/requirements.txt
 ARG PIP_CACHE_DIR=/tmp/pip-cache
 RUN --mount=type=cache,target=${PIP_CACHE_DIR} \
     --mount=type=cache,from=build-stage,source=/tmp/wheels,target=/tmp/wheels \
-    pip install --no-cache-dir --upgrade pip==23.3 \
+    pip install --no-cache-dir --upgrade pip==23.3.* \
     && pip install \
     --no-cache-dir \
     --find-links=/tmp/wheels/ \
@@ -101,11 +102,12 @@ RUN --mount=type=cache,target=${PIP_CACHE_DIR} \
     # py-spy is useful for profiling performance of running hubs
     py-spy
 
-RUN dnf install -y --no-docs curl \
-    bind-utils \
-    git \
-    less \
-    vim-common \
-    vim-enhanced
+RUN dnf install -y --nodocs curl-7.61.1-30.el8_8.3 \
+    bind-utils-32:9.11.36-8.el8_8.2 \
+    git-2.39.3-1.el8_8 \
+    less-530-1.el8 \
+    vim-common-2:8.0.1763-19.el8_6.4 \
+    vim-enhanced-2:8.0.1763-19.el8_6.4 \
+    && dnf clean all
 
 USER ${NB_USER}
