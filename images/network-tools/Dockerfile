@@ -2,4 +2,4 @@ FROM registry.access.redhat.com/ubi8/ubi-minimal@sha256:b93deceb59a58588d5b16429
 
 # VULN_SCAN_TIME=2023-06-19_05:12:47
 
-RUN microdnf install -y iptables
+RUN microdnf install --nodocs -y iptables
