@@ -56,7 +56,9 @@ RUN useradd \
     --shell /bin/bash \
     "${NB_USER}"
 
-RUN dnf install -y libcurl libpq sqlite
+RUN dnf install -y libcurl \
+    libpq \
+    sqlite
 
 # install wheels built in the build stage
 COPY requirements.txt /tmp/requirements.txt
@@ -99,6 +101,11 @@ RUN --mount=type=cache,target=${PIP_CACHE_DIR} \
     # py-spy is useful for profiling performance of running hubs
     py-spy
 
-RUN dnf install -y curl bind-utils git less vim-common vim-enhanced
+RUN dnf install -y curl \
+    bind-utils \
+    git \
+    less \
+    vim-common \
+    vim-enhanced
 
 USER ${NB_USER}
