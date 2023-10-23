@@ -56,18 +56,9 @@ RUN useradd \
     --shell /bin/bash \
     "${NB_USER}"
 
-RUN yum update -y \
-    && yum upgrade -y \
-    && yum install -y --setopt=tsflags=nodocs \
-    # requirement for pycurl
-    libcurl-7.61.1-30.el8_8.3 \
-    # requirement for using postgres database `postgresql-libs`
-    libpq-13.5-1.el8 \
-    # # requirement for using a local sqlite database
-    sqlite-3.26.0-18.el8_8 \
-    # tini not available via yum
-    # tini-0.16.1-1.el8ar \
-    && rm -rf /var/cache/yum/*
+RUN dnf install -y libcurl \
+    libpq \
+    sqlite
 
 # install wheels built in the build stage
 COPY requirements.txt /tmp/requirements.txt
@@ -110,15 +101,11 @@ RUN --mount=type=cache,target=${PIP_CACHE_DIR} \
     # py-spy is useful for profiling performance of running hubs
     py-spy
 
-RUN yum update -y \
-    && yum upgrade -y \
-    && yum install -y --setopt=tsflags=nodocs \
-    curl-7.61.1-30.el8_8.3 \
-    bind-utils-32:9.11.36-8.el8_8.2 \
-    git-2.39.3-1.el8_8 \
-    less-530-1.el8 \
-    vim-common-2:8.0.1763-19.el8_6.4 \
-    vim-enhanced-2:8.0.1763-19.el8_6.4 \
-    && rm -rf /var/cache/yum/*
+RUN dnf install -y curl \
+    bind-utils \
+    git \
+    less \
+    vim-common \
+    vim-enhanced
 
 USER ${NB_USER}
