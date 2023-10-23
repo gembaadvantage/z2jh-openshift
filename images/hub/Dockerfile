@@ -56,7 +56,7 @@ RUN useradd \
     --shell /bin/bash \
     "${NB_USER}"
 
-RUN dnf install -y libcurl \
+RUN dnf install -y --nodocs libcurl \
     libpq \
     sqlite
 
@@ -101,7 +101,7 @@ RUN --mount=type=cache,target=${PIP_CACHE_DIR} \
     # py-spy is useful for profiling performance of running hubs
     py-spy
 
-RUN dnf install -y curl \
+RUN dnf install -y --no-docs curl \
     bind-utils \
     git \
     less \
