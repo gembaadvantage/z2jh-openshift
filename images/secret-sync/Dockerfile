@@ -1,18 +1,11 @@
-FROM python:3.11-alpine
+FROM registry.access.redhat.com/ubi8/python-311:1-25.1696515654
 
 # VULN_SCAN_TIME=2023-07-31_05:12:49
-
-# Note that we use tini-static, it embeds dependencies missing in alpine
-RUN ARCH=`uname -m`; \
-    if [ "$ARCH" = x86_64 ]; then ARCH=amd64; fi; \
-    if [ "$ARCH" = aarch64 ]; then ARCH=arm64; fi; \
-    wget -qO /tini "https://github.com/krallin/tini/releases/download/v0.19.0/tini-static-$ARCH" \
- && chmod +x /tini
 
 # Ensures written logs are made available directly
 ENV PYTHONUNBUFFERED=1
 
-RUN pip install --no-cache kubernetes
+RUN pip install --no-cache --no-cache-dir kubernetes==28.1.*
 COPY acme-secret-sync.py /usr/local/bin/
 
-ENTRYPOINT [ "/tini", "--", "/usr/local/bin/acme-secret-sync.py" ]
+ENTRYPOINT [ "/usr/local/bin/acme-secret-sync.py" ]
