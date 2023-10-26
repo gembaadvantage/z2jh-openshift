@@ -31,7 +31,17 @@ imagePullSecrets: []
 # ConfigurableHTTPProxy speaks with the actual ConfigurableHTTPProxy server in
 # the proxy pod.
 hub:
-  revisionHistoryLimit:
+containerSecurityContext:
+  runAsUser: 1000
+  runAsGroup: 1000
+  runAsNonRoot: true
+  allowPrivilegeEscalation: false
+  capabilities:
+    drop:
+      - ALL
+  seccompProfile:
+    type: RuntimeDefault
+revisionHistoryLimit:
   config:
     JupyterHub:
       admin_access: true
@@ -354,6 +364,14 @@ proxy:
 # singleuser relates to the configuration of KubeSpawner which runs in the hub
 # pod, and its spawning of user pods such as jupyter-myusername.
 singleuser:
+  securityContext:
+    runAsUser: 1000
+    runAsNonRoot: true
+    capabilities:
+      drop:
+        - "ALL"
+    seccompProfile:
+      type: "RuntimeDefault"
   podNameTemplate:
   extraTolerations: []
   nodeSelector: {}
@@ -643,6 +661,14 @@ prePuller:
   extraTolerations: []
   # hook relates to the hook-image-awaiter Job and hook-image-puller DaemonSet
   hook:
+    securityContext:
+      runAsUser: 1000
+      runAsNonRoot: true
+      capabilities:
+        drop:
+          - "ALL"
+      seccompProfile:
+        type: "RuntimeDefault"
     enabled: true
     pullOnlyOnChanges: true
     # image and the configuration below relates to the hook-image-awaiter Job

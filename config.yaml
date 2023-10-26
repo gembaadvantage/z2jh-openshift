@@ -1,0 +1,16 @@
+singleuser:
+  securityContext:
+    runAsUser: 0
+    runAsNonRoot: false
+    capabilities:
+      drop:
+        - "ALL"
+prePuller:
+  hook:
+    securityContext:
+      runAsUser: 0
+      runAsNonRoot: false
+      capabilities:
+        drop:
+          - "ALL"
+
