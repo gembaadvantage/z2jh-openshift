@@ -42,7 +42,6 @@ hub:
       nodePort: 32767
     annotations: {}
     extraPorts: []
-    #loadBalancerIP:
   baseUrl: /
   cookieSecret:
   initContainers: []
@@ -88,8 +87,6 @@ hub:
     pullPolicy:
     pullSecrets: []
   resources: {}
-  podSecurityContext:
-    fsGroup: 1000
   containerSecurityContext:
     runAsUser: 1000660006
     runAsGroup: 2000
@@ -419,6 +416,16 @@ singleuser:
       pvcNameTemplate: claim-{username}{servername}
       volumeNameTemplate: volume-{username}{servername}
       storageAccessModes: [ReadWriteOnce]
+  containerSecurityContext:
+    runAsUser: 1000660020 # nobody user
+    runAsGroup: 65534 # nobody group
+    allowPrivilegeEscalation: false
+    capabilities:
+      drop:
+        - ALL
+      runAsNonRoot: true
+      seccompProfile:
+        type: RuntimeDefault
   image:
     name: jupyterhub/k8s-singleuser-sample
     tag: "3.1.0"
