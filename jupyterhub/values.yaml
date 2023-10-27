@@ -37,10 +37,10 @@ hub:
       admin_access: true
       authenticator_class: dummy
   service:
-    type: ClusterIP
-    annotations: {}
+    type: NodePort
     ports:
-      nodePort:
+      nodePort: 32767
+    annotations: {}
     extraPorts: []
     loadBalancerIP:
   baseUrl: /
