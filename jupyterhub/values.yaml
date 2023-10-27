@@ -42,7 +42,7 @@ hub:
       nodePort: 32767
     annotations: {}
     extraPorts: []
-    loadBalancerIP:
+    #loadBalancerIP:
   baseUrl: /
   cookieSecret:
   initContainers: []
