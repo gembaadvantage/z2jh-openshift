@@ -84,21 +84,21 @@ hub:
   extraVolumeMounts: []
   image:
     name: jupyterhub/k8s-hub
-    tag: "set-by-chartpress"
+    tag: "3.1.0"
     pullPolicy:
     pullSecrets: []
   resources: {}
   podSecurityContext:
     fsGroup: 1000
   containerSecurityContext:
-    runAsUser: 1000
-    runAsGroup: 1000
+    runAsUser: 1000660006
+    runAsGroup: 2000
     allowPrivilegeEscalation: false
     capabilities:
       drop:
         - ALL
-      seccompProfile:
-        type: RuntimeDefault
+    seccompProfile:
+      type: RuntimeDefault
     runAsNonRoot: true
   lifecycle: {}
   loadRoles: {}
@@ -203,7 +203,7 @@ proxy:
   chp:
     revisionHistoryLimit:
     containerSecurityContext:
-      runAsUser: 65534 # nobody user
+      runAsUser: 1000660007 # nobody user
       runAsGroup: 65534 # nobody group
       allowPrivilegeEscalation: false
       capabilities:
@@ -262,7 +262,7 @@ proxy:
   traefik:
     revisionHistoryLimit:
     containerSecurityContext:
-      runAsUser: 65534 # nobody user
+      runAsUser: 1000660008 # nobody user
       runAsGroup: 65534 # nobody group
       allowPrivilegeEscalation: false
       capabilities:
@@ -318,7 +318,7 @@ proxy:
     extraPodSpec: {}
   secretSync:
     containerSecurityContext:
-      runAsUser: 65534 # nobody user
+      runAsUser: 1000660009 # nobody user
       runAsGroup: 65534 # nobody group
       allowPrivilegeEscalation: false
       capabilities:
@@ -329,7 +329,7 @@ proxy:
         type: RuntimeDefault
     image:
       name: jupyterhub/k8s-secret-sync
-      tag: "set-by-chartpress"
+      tag: "3.1.0"
       pullPolicy:
       pullSecrets: []
     resources: {}
@@ -369,7 +369,7 @@ singleuser:
   networkTools:
     image:
       name: jupyterhub/k8s-network-tools
-      tag: "set-by-chartpress"
+      tag: "3.1.0"
       pullPolicy:
       pullSecrets: []
     resources: {}
@@ -421,7 +421,7 @@ singleuser:
       storageAccessModes: [ReadWriteOnce]
   image:
     name: jupyterhub/k8s-singleuser-sample
-    tag: "set-by-chartpress"
+    tag: "3.1.0"
     pullPolicy:
     pullSecrets: []
   startTimeout: 300
@@ -504,7 +504,7 @@ scheduling:
                 weight: 1
             type: MostAllocated
     containerSecurityContext:
-      runAsUser: 65534 # nobody user
+      runAsUser: 1000660001 # nobody user
       runAsGroup: 65534 # nobody group
       allowPrivilegeEscalation: false
       capabilities:
@@ -546,7 +546,7 @@ scheduling:
       # tag is automatically bumped to new patch versions by the
       # watch-dependencies.yaml workflow. The minor version is pinned in the
       # workflow, and should be updated there if a minor version bump is done
-      # here. We aim to stay around 1 minor version behind the latest k8s
+      # here. We aim to stay around 1 minor version behind the 3.1.0 k8s
       # version.
       #
       tag: "v1.26.10" # ref: https://github.com/kubernetes/kubernetes/tree/master/CHANGELOG
@@ -589,7 +589,7 @@ scheduling:
     labels: {}
     annotations: {}
     containerSecurityContext:
-      runAsUser: 65534 # nobody user
+      runAsUser: 1000660002 # nobody user
       runAsGroup: 65534 # nobody group
       allowPrivilegeEscalation: false
       capabilities:
@@ -631,7 +631,7 @@ prePuller:
   annotations: {}
   resources: {}
   containerSecurityContext:
-    runAsUser: 65534 # nobody user
+    runAsUser: 1000660003 # nobody user
     runAsGroup: 65534 # nobody group
     allowPrivilegeEscalation: false
     capabilities:
@@ -648,11 +648,11 @@ prePuller:
     # image and the configuration below relates to the hook-image-awaiter Job
     image:
       name: jupyterhub/k8s-image-awaiter
-      tag: "set-by-chartpress"
+      tag: "3.1.0"
       pullPolicy:
       pullSecrets: []
     containerSecurityContext:
-      runAsUser: 65534 # nobody user
+      runAsUser: 1000660004 # nobody user
       runAsGroup: 65534 # nobody group
       allowPrivilegeEscalation: false
       capabilities:
@@ -675,7 +675,7 @@ prePuller:
   extraImages: {}
   pause:
     containerSecurityContext:
-      runAsUser: 65534 # nobody user
+      runAsUser: 1000660005 # nobody user
       runAsGroup: 65534 # nobody group
       allowPrivilegeEscalation: false
       capabilities:
