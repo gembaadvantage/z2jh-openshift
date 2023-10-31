@@ -88,7 +88,7 @@ hub:
     pullSecrets: []
   resources: {}
   containerSecurityContext:
-    runAsUser: 1000660006
+    runAsUser: 1000650006
     runAsGroup: 2000
     allowPrivilegeEscalation: false
     capabilities:
@@ -185,30 +185,18 @@ proxy:
     rollingUpdate:
   # service relates to the proxy-public service
   service:
-    type: LoadBalancer
+    type: NodePort
     labels: {}
     annotations: {}
     nodePorts:
-      http:
-      https:
+      http: 30080
+      https: 30443
     disableHttpPort: false
     extraPorts: []
-    loadBalancerIP:
-    loadBalancerSourceRanges: []
   # chp relates to the proxy pod, which is responsible for routing traffic based
   # on dynamic configuration sent from JupyterHub to CHP's REST API.
   chp:
     revisionHistoryLimit:
-    containerSecurityContext:
-      runAsUser: 1000660007 # nobody user
-      runAsGroup: 65534 # nobody group
-      allowPrivilegeEscalation: false
-      capabilities:
-        drop:
-          - ALL
-      runAsNonRoot: true
-      seccompProfile:
-        type: RuntimeDefault
     image:
       name: jupyterhub/configurable-http-proxy
       # tag is automatically bumped to new patch versions by the
@@ -217,6 +205,16 @@ proxy:
       tag: "4.6.0" # https://github.com/jupyterhub/configurable-http-proxy/tags
       pullPolicy:
       pullSecrets: []
+    containerSecurityContext:
+      runAsUser: 1000650007 # nobody user
+      runAsGroup: 65534 # nobody group
+      allowPrivilegeEscalation: false
+      capabilities:
+        drop:
+          - ALL
+      runAsNonRoot: true
+      seccompProfile:
+        type: RuntimeDefault
     extraCommandLineFlags: []
     livenessProbe:
       enabled: true
@@ -258,16 +256,6 @@ proxy:
   # termination when proxy.https.type=letsencrypt.
   traefik:
     revisionHistoryLimit:
-    containerSecurityContext:
-      runAsUser: 1000660008 # nobody user
-      runAsGroup: 65534 # nobody group
-      allowPrivilegeEscalation: false
-      capabilities:
-        drop:
-          - ALL
-      runAsNonRoot: true
-      seccompProfile:
-        type: RuntimeDefault
     image:
       name: traefik
       # tag is automatically bumped to new patch versions by the
@@ -276,6 +264,16 @@ proxy:
       tag: "v2.10.5" # ref: https://hub.docker.com/_/traefik?tab=tags
       pullPolicy:
       pullSecrets: []
+    containerSecurityContext:
+      runAsUser: 1000650008 # nobody user
+      runAsGroup: 65534 # nobody group
+      allowPrivilegeEscalation: false
+      capabilities:
+        drop:
+          - ALL
+      runAsNonRoot: true
+      seccompProfile:
+        type: RuntimeDefault
     hsts:
       includeSubdomains: false
       preload: false
@@ -314,8 +312,14 @@ proxy:
       annotations: {}
     extraPodSpec: {}
   secretSync:
+    image:
+      name: jupyterhub/k8s-secret-sync
+      tag: "3.1.0"
+      pullPolicy:
+      pullSecrets: []
+    resources: {}
     containerSecurityContext:
-      runAsUser: 1000660009 # nobody user
+      runAsUser: 1000650009 # nobody user
       runAsGroup: 65534 # nobody group
       allowPrivilegeEscalation: false
       capabilities:
@@ -324,12 +328,6 @@ proxy:
       runAsNonRoot: true
       seccompProfile:
         type: RuntimeDefault
-    image:
-      name: jupyterhub/k8s-secret-sync
-      tag: "3.1.0"
-      pullPolicy:
-      pullSecrets: []
-    resources: {}
   labels: {}
   https:
     enabled: false
@@ -370,10 +368,20 @@ singleuser:
       pullPolicy:
       pullSecrets: []
     resources: {}
+    containerSecurityContext:
+      runAsUser: 1000650020 # nobody user
+      runAsGroup: 65534 # nobody group
+      allowPrivilegeEscalation: false
+      capabilities:
+        drop:
+          - ALL
+        runAsNonRoot: true
+        seccompProfile:
+          type: RuntimeDefault
   cloudMetadata:
     # block set to true will append a privileged initContainer using the
     # iptables to block the sensitive metadata server at the provided ip.
-    blockWithIptables: true
+    blockWithIptables: false # true
     ip: 169.254.169.254
   networkPolicy:
     enabled: true
@@ -398,8 +406,8 @@ singleuser:
   initContainers: []
   extraContainers: []
   allowPrivilegeEscalation: false
-  uid: 1000
-  fsGid: 100
+  uid: 1000659998 # 1000
+  fsGid: 0 #100
   serviceAccountName:
   storage:
     type: dynamic
@@ -416,9 +424,14 @@ singleuser:
       pvcNameTemplate: claim-{username}{servername}
       volumeNameTemplate: volume-{username}{servername}
       storageAccessModes: [ReadWriteOnce]
+  image:
+    name: jupyterhub/k8s-singleuser-sample
+    tag: "3.1.0"
+    pullPolicy:
+    pullSecrets: []
   containerSecurityContext:
-    runAsUser: 1000660020 # nobody user
-    runAsGroup: 65534 # nobody group
+    runAsUser: 1000650025 # nobody user
+    runAsGroup: 65538 # nobody group
     allowPrivilegeEscalation: false
     capabilities:
       drop:
@@ -426,11 +439,6 @@ singleuser:
       runAsNonRoot: true
       seccompProfile:
         type: RuntimeDefault
-  image:
-    name: jupyterhub/k8s-singleuser-sample
-    tag: "3.1.0"
-    pullPolicy:
-    pullSecrets: []
   startTimeout: 300
   cpu:
     limit:
@@ -510,16 +518,6 @@ scheduling:
               - name: memory
                 weight: 1
             type: MostAllocated
-    containerSecurityContext:
-      runAsUser: 1000660001 # nobody user
-      runAsGroup: 65534 # nobody group
-      allowPrivilegeEscalation: false
-      capabilities:
-        drop:
-          - ALL
-      runAsNonRoot: true
-      seccompProfile:
-        type: RuntimeDefault
     image:
       # IMPORTANT: Bumping the minor version of this binary should go hand in
       #            hand with an inspection of the user-scheduelrs RBAC resources
@@ -559,6 +557,16 @@ scheduling:
       tag: "v1.26.10" # ref: https://github.com/kubernetes/kubernetes/tree/master/CHANGELOG
       pullPolicy:
       pullSecrets: []
+    containerSecurityContext:
+      runAsUser: 1000650001 # nobody user
+      runAsGroup: 65534 # nobody group
+      allowPrivilegeEscalation: false
+      capabilities:
+        drop:
+          - ALL
+      runAsNonRoot: true
+      seccompProfile:
+        type: RuntimeDefault
     nodeSelector: {}
     tolerations: []
     labels: {}
@@ -591,12 +599,8 @@ scheduling:
       tag: "3.9"
       pullPolicy:
       pullSecrets: []
-    revisionHistoryLimit:
-    replicas: 0
-    labels: {}
-    annotations: {}
     containerSecurityContext:
-      runAsUser: 1000660002 # nobody user
+      runAsUser: 1000650002 # nobody user
       runAsGroup: 65534 # nobody group
       allowPrivilegeEscalation: false
       capabilities:
@@ -605,6 +609,10 @@ scheduling:
       runAsNonRoot: true
       seccompProfile:
         type: RuntimeDefault
+    revisionHistoryLimit:
+    replicas: 0
+    labels: {}
+    annotations: {}
     resources: {}
   corePods:
     tolerations:
@@ -638,7 +646,7 @@ prePuller:
   annotations: {}
   resources: {}
   containerSecurityContext:
-    runAsUser: 1000660003 # nobody user
+    runAsUser: 1000650003 # nobody user
     runAsGroup: 65534 # nobody group
     allowPrivilegeEscalation: false
     capabilities:
@@ -659,7 +667,7 @@ prePuller:
       pullPolicy:
       pullSecrets: []
     containerSecurityContext:
-      runAsUser: 1000660004 # nobody user
+      runAsUser: 1000650004 # nobody user
       runAsGroup: 65534 # nobody group
       allowPrivilegeEscalation: false
       capabilities:
@@ -681,16 +689,6 @@ prePuller:
   pullProfileListImages: true
   extraImages: {}
   pause:
-    containerSecurityContext:
-      runAsUser: 1000660005 # nobody user
-      runAsGroup: 65534 # nobody group
-      allowPrivilegeEscalation: false
-      capabilities:
-        drop:
-          - ALL
-      runAsNonRoot: true
-      seccompProfile:
-        type: RuntimeDefault
     image:
       name: registry.k8s.io/pause
       # tag is automatically bumped to new patch versions by the
@@ -701,6 +699,16 @@ prePuller:
       tag: "3.9"
       pullPolicy:
       pullSecrets: []
+    containerSecurityContext:
+      runAsUser: 1000650005 # nobody user
+      runAsGroup: 65534 # nobody group
+      allowPrivilegeEscalation: false
+      capabilities:
+        drop:
+          - ALL
+      runAsNonRoot: true
+      seccompProfile:
+        type: RuntimeDefault
 
 ingress:
   enabled: false
