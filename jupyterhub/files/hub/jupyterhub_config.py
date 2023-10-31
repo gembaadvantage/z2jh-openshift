@@ -444,9 +444,12 @@ if cloud_metadata.get("blockWithIptables") == True:
             "DROP",
         ],
         security_context=client.V1SecurityContext(
-            privileged=True,
-            run_as_user=0,
-            capabilities=client.V1Capabilities(add=["NET_ADMIN"]),
+            run_as_group=2000,
+            # allow_privilege_escalation=False,
+            # privileged=True,
+            run_as_user=1000659998,  # 0
+            # capabilities=
+            # capabilities=client.V1Capabilities(add=["NET_ADMIN"]),
         ),
         resources=network_tools_resources,
     )
