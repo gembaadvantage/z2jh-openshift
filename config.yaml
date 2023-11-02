@@ -1,0 +1,81 @@
+proxy:
+  service:
+    type: NodePort # TODO: Change to ClusterIP w/ Route?
+    nodePorts:
+      http: 30080
+      https: 30443
+  # https:  # TODO: enable in future
+  #   enabled: true
+  #   type: letsencrypt
+  #   hosts:
+  #     - local.jovyan.org
+  #   letsencrypt:
+  #     contactEmail: "jovyan@jupyter.test"
+  #     acmeServer: https://pebble/dir
+  traefik:
+    containerSecurityContext: &security_context
+      runAsUser: 1000650008 # nobody user
+      runAsGroup: 65534 # nobody group
+      allowPrivilegeEscalation: false
+      capabilities:
+        drop:
+          - ALL
+      runAsNonRoot: true
+      seccompProfile:
+        type: RuntimeDefault
+  secretSync:
+    containerSecurityContext:
+      <<: *security_context
+      runAsUser: 1000650009 # nobody user
+      runAsGroup: 65534 # nobody group
+  chp:
+    containerSecurityContext:
+      <<: *security_context
+      runAsUser: 1000650007 # nobody user
+      runAsGroup: 65534 # nobody group
+
+hub:
+  podSecurityContext:
+    fsGroup:
+  containerSecurityContext:
+    <<: *security_context
+    runAsUser: 1000650006
+    runAsGroup: 2000
+
+singleuser:
+  uid: 1000659998
+  fsGid:
+  cloudMetadata:
+    blockWithIptables: false
+
+prePuller:
+  containerSecurityContext:
+    <<: *security_context
+    runAsUser: 1000650003 # nobody user
+    runAsGroup: 1000650000 # nobody group
+  hook:
+    enabled: true
+    containerSecurityContext:
+      <<: *security_context
+      runAsUser: 1000650004 # nobody user
+      runAsGroup: 1000650000 # nobody group
+
+scheduling:
+  userScheduler:
+    containerSecurityContext:
+      <<: *security_context
+      runAsUser: 1000650001
+      runAsGroup: 65534
+    enabled: true
+    replicas: 2
+    # Can be set too low too not show scoring of scheduled pods, but also too
+    # high to show hex dumps of all network traffic.
+    #
+    # FIXME: Tweak this to include scoring, but exclude hex dumps. 10 includes
+    #        hex dumps. 4 does not include scoring. Trying with 6...
+    logLevel: 6 # 4 by default, 6 for local dev.
+  podPriority:
+    enabled: true
+
+debug:
+  enabled: true

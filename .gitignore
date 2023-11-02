@@ -6,7 +6,6 @@ tools/templates/rendered-templates/
 ci/ephemeral*
 tmp/
 
-
 ### Other misc things
 
 .vscode
@@ -42,7 +41,6 @@ Temporary Items
 [._]s[a-w][a-z]
 # session
 Session.vim
-
 
 ### Python .gitignore from https://github.com/github/gitignore/blob/HEAD/Python.gitignore
 

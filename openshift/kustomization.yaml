@@ -1,0 +1,12 @@
+resources:
+  - ../base
+  - create-open-ns-np.yaml
+
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+configMapGenerator:
+  - name: hub
+    behavior: merge
+    files:
+      - jupyterhub_config.py
