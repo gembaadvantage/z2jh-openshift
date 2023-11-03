@@ -33,6 +33,9 @@ proxy:
       runAsUser: 1000650009 # nobody user
       runAsGroup: 65534 # nobody group
   chp:
+    image:
+      name: willhgemba/configurable-http-proxy
+      tag: "0.1.0"
     containerSecurityContext:
       <<: *security_context
       runAsUser: 1000650007 # nobody user
