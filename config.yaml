@@ -13,6 +13,7 @@ proxy:
   #     contactEmail: "jovyan@jupyter.test"
   #     acmeServer: https://pebble/dir
   traefik:
+    # TODO: Check if a RH UBI:8 image exists for traefik already client side.
     containerSecurityContext: &security_context
       runAsUser: 1000650008 # nobody user
       runAsGroup: 65534 # nobody group
@@ -24,6 +25,9 @@ proxy:
       seccompProfile:
         type: RuntimeDefault
   secretSync:
+    image:
+      name: willhgemba/k8s-secret-sync
+      tag: 0.1.0"
     containerSecurityContext:
       <<: *security_context
       runAsUser: 1000650009 # nobody user
@@ -35,6 +39,9 @@ proxy:
       runAsGroup: 65534 # nobody group
 
 hub:
+  image:
+    name: willhgemba/k8s-hub
+    tag: "0.1.0"
   podSecurityContext:
     fsGroup:
   containerSecurityContext:
@@ -43,6 +50,13 @@ hub:
     runAsGroup: 2000
 
 singleuser:
+  networkTools:
+    image:
+      name: willhgemba/k8s-network-tools
+      tag: "0.1.0"
+  image:
+    name: willhgemba/k8s-singleuser-sample
+    tag: "0.1.0"
   uid: 1000659998
   fsGid:
   cloudMetadata:
@@ -54,6 +68,9 @@ prePuller:
     runAsUser: 1000650003 # nobody user
     runAsGroup: 1000650000 # nobody group
   hook:
+    image:
+      name: willhgemba/k8s-image-awaiter
+      tag: "0.1.0"
     enabled: true
     containerSecurityContext:
       <<: *security_context
