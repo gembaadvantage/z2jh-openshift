@@ -1,9 +1,6 @@
 proxy:
   service:
-    type: NodePort # TODO: Change to ClusterIP w/ Route?
-    nodePorts:
-      http: 30080
-      https: 30443
+    type: ClusterIP # TODO: Change to ClusterIP w/ Route?
   # https:  # TODO: enable in future
   #   enabled: true
   #   type: letsencrypt
