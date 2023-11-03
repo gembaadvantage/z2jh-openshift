@@ -1,0 +1,15 @@
+# Source: jupyter-specifics/templates/route.yaml
+kind: Route
+apiVersion: route.openshift.io/v1
+metadata:
+  name: notebooks
+spec:
+  to:
+    kind: Service
+    name: proxy-public
+    weight: 100
+  port:
+    targetPort: http
+  tls:
+    termination: edge
+  wildcardPolicy: None
