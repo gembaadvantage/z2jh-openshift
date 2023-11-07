@@ -55,8 +55,8 @@ singleuser:
       name: willhgemba/k8s-network-tools
       tag: "0.1.0"
   image:
-    name: willhgemba/k8s-singleuser-sample
-    tag: "0.1.0"
+    name: willhgemba/scipy-notebook
+    tag: "latest"
   uid: 1000659998
   fsGid:
   cloudMetadata:
