@@ -12,7 +12,7 @@ proxy:
   traefik:
     # TODO: Check if a RH UBI:8 image exists for traefik already client side.
     containerSecurityContext: &security_context
-      runAsUser: 1000650008 # nobody user
+      runAsUser: 1000660008 # nobody user
       runAsGroup: 65534 # nobody group
       allowPrivilegeEscalation: false
       capabilities:
@@ -23,42 +23,42 @@ proxy:
         type: RuntimeDefault
   secretSync:
     image:
-      name: willhgemba/k8s-secret-sync
-      tag: 0.1.0"
+      name: willhgemba/secret-sync
+      tag: latest
     containerSecurityContext:
       <<: *security_context
-      runAsUser: 1000650009 # nobody user
+      runAsUser: 1000660009 # nobody user
       runAsGroup: 65534 # nobody group
   chp:
     image:
       name: willhgemba/configurable-http-proxy
-      tag: "0.1.0"
+      tag: latest
     containerSecurityContext:
       <<: *security_context
-      runAsUser: 1000650007 # nobody user
+      runAsUser: 1000660007 # nobody user
       runAsGroup: 65534 # nobody group
 
 hub:
   image:
-    name: willhgemba/k8s-hub
-    tag: "0.1.0"
+    name: willhgemba/hub
+    tag: latest
   podSecurityContext:
     fsGroup:
   containerSecurityContext:
     <<: *security_context
-    runAsUser: 1000650006
+    runAsUser: 1000660006
     runAsGroup: 2000
 
 singleuser:
   startTimeout: 1200 # Extend because of large image size.
   networkTools:
     image:
-      name: willhgemba/k8s-network-tools
-      tag: "0.1.0"
+      name: willhgemba/network-tools
+      tag: latest
   image:
     name: willhgemba/scipy-notebook # base-notebook
     tag: "latest"
-  uid: 1000659998
+  uid: 1000669998
   fsGid:
   cloudMetadata:
     blockWithIptables: false
@@ -66,28 +66,28 @@ singleuser:
 prePuller:
   containerSecurityContext:
     <<: *security_context
-    runAsUser: 1000650003 # nobody user
-    runAsGroup: 1000650000 # nobody group
+    runAsUser: 1000660003 # nobody user
+    runAsGroup: 1000660000 # nobody group
   hook:
     image:
-      name: willhgemba/k8s-image-awaiter
-      tag: "0.1.0"
+      name: willhgemba/image-awaiter
+      tag: latest
     enabled: true
     containerSecurityContext:
       <<: *security_context
-      runAsUser: 1000650004 # nobody user
-      runAsGroup: 1000650000 # nobody group
+      runAsUser: 1000660004 # nobody user
+      runAsGroup: 1000660000 # nobody group
   pause:
     containerSecurityContext:
       <<: *security_context
-      runAsUser: 1000651004
-      runAsGroup: 1000651004
+      runAsUser: 1000661004
+      runAsGroup: 1000661004
 
 scheduling:
   userScheduler:
     containerSecurityContext:
       <<: *security_context
-      runAsUser: 1000650001
+      runAsUser: 1000660001
       runAsGroup: 65534
     enabled: true
     replicas: 2
