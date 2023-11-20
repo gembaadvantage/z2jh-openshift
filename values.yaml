@@ -12,7 +12,7 @@ proxy:
   traefik:
     # TODO: Check if a RH UBI:8 image exists for traefik already client side.
     containerSecurityContext: &security_context
-      runAsUser: 1000660008 # nobody user
+      runAsUser: 1000670008 # nobody user
       runAsGroup: 65534 # nobody group
       allowPrivilegeEscalation: false
       capabilities:
@@ -27,7 +27,7 @@ proxy:
       tag: latest
     containerSecurityContext:
       <<: *security_context
-      runAsUser: 1000660009 # nobody user
+      runAsUser: 1000670009 # nobody user
       runAsGroup: 65534 # nobody group
   chp:
     image:
@@ -35,7 +35,7 @@ proxy:
       tag: latest
     containerSecurityContext:
       <<: *security_context
-      runAsUser: 1000660007 # nobody user
+      runAsUser: 1000670007 # nobody user
       runAsGroup: 65534 # nobody group
 
 hub:
@@ -46,8 +46,26 @@ hub:
     fsGroup:
   containerSecurityContext:
     <<: *security_context
-    runAsUser: 1000660006
+    runAsUser: 1000670006
     runAsGroup: 2000
+  livenessProbe:
+    # The livenessProbe's aim to give JupyterHub sufficient time to startup but
+    # be able to restart if it becomes unresponsive for ~5 min.
+    enabled: false
+    initialDelaySeconds: 300
+    periodSeconds: 10
+    failureThreshold: 30
+    timeoutSeconds: 3
+  readinessProbe:
+    # The readinessProbe's aim is to provide a successful startup indication,
+    # but following that never become unready before its livenessProbe fail and
+    # restarts it if needed. To become unready following startup serves no
+    # purpose as there are no other pod to fallback to in our non-HA deployment.
+    enabled: false
+    initialDelaySeconds: 0
+    periodSeconds: 2
+    failureThreshold: 1000
+    timeoutSeconds: 1
 
 singleuser:
   startTimeout: 1200 # Extend because of large image size.
@@ -58,7 +76,7 @@ singleuser:
   image:
     name: willhgemba/scipy-notebook # base-notebook
     tag: "latest"
-  uid: 1000669998
+  uid: 1000679998
   fsGid:
   cloudMetadata:
     blockWithIptables: false
@@ -66,8 +84,8 @@ singleuser:
 prePuller:
   containerSecurityContext:
     <<: *security_context
-    runAsUser: 1000660003 # nobody user
-    runAsGroup: 1000660000 # nobody group
+    runAsUser: 1000670003 # nobody user
+    runAsGroup: 1000670000 # nobody group
   hook:
     image:
       name: willhgemba/image-awaiter
@@ -75,19 +93,19 @@ prePuller:
     enabled: true
     containerSecurityContext:
       <<: *security_context
-      runAsUser: 1000660004 # nobody user
-      runAsGroup: 1000660000 # nobody group
+      runAsUser: 1000670004 # nobody user
+      runAsGroup: 1000670000 # nobody group
   pause:
     containerSecurityContext:
       <<: *security_context
-      runAsUser: 1000661004
-      runAsGroup: 1000661004
+      runAsUser: 1000671004
+      runAsGroup: 1000671004
 
 scheduling:
   userScheduler:
     containerSecurityContext:
       <<: *security_context
-      runAsUser: 1000660001
+      runAsUser: 1000670001
       runAsGroup: 65534
     enabled: true
     replicas: 2

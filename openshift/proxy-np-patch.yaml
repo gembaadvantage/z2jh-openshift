@@ -1,0 +1,12 @@
+- op: replace
+  path: /spec/ingress/0/ports/0/port
+  value: 8000
+- op: replace
+  path: /spec/ingress/0/ports/1/port
+  value: 8443
+- op: replace
+  path: /spec/ingress/1/ports/0/port
+  value: 8000
+- op: replace
+  path: /spec/ingress/2/ports/0/port
+  value: 8001

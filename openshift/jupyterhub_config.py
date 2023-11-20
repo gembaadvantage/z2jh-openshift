@@ -447,7 +447,7 @@ if cloud_metadata.get("blockWithIptables") == True:
         security_context=client.V1SecurityContext(
             run_as_group=2000,
             privileged=True,
-            run_as_user=1000669998,  # 0
+            run_as_user=1000679998,  # 0
             capabilities=client.V1Capabilities(add=["NET_ADMIN"]),
         ),
         resources=network_tools_resources,
