@@ -1,6 +1,5 @@
 resources:
   - ../base
-  - create-open-ns-np.yaml
   - create-route-proxy-public.yaml
 
 apiVersion: kustomize.config.k8s.io/v1beta1
@@ -11,3 +10,22 @@ configMapGenerator:
     behavior: merge
     files:
       - jupyterhub_config.py
+patches:
+  - target:
+      group: networking.k8s.io
+      version: v1
+      kind: NetworkPolicy
+      name: proxy
+    path: proxy-np-patch.yaml
+  - target:
+      group: networking.k8s.io
+      version: v1
+      kind: NetworkPolicy
+      name: hub
+    path: hub-np-patch.yaml
+#   - target:
+#       group: networking.k8s.io
+#       version: v1
+#       kind: NetworkPolicy
+#       name: singleuser
+#     path: singleuser-np-patch.yaml
