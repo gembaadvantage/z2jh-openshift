@@ -1,7 +1,7 @@
 proxy:
   service:
-    type: ClusterIP # TODO: Change to ClusterIP w/ Route?
-  # https:  # TODO: enable in future
+    type: ClusterIP
+  # https:  # Uncomment and configure to enable HTTPS.
   #   enabled: true
   #   type: letsencrypt
   #   hosts:
@@ -10,7 +10,6 @@ proxy:
   #     contactEmail: "jovyan@jupyter.test"
   #     acmeServer: https://pebble/dir
   traefik:
-    # TODO: Check if a RH UBI:8 image exists for traefik already client side.
     containerSecurityContext: &security_context
       runAsUser: 1000670008 # nobody user
       runAsGroup: 65534 # nobody group
