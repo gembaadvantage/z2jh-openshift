@@ -23,9 +23,9 @@ patches:
       kind: NetworkPolicy
       name: hub
     path: hub-np-patch.yaml
-#   - target:
-#       group: networking.k8s.io
-#       version: v1
-#       kind: NetworkPolicy
-#       name: singleuser
-#     path: singleuser-np-patch.yaml
+  - target:
+      group: networking.k8s.io
+      version: v1
+      kind: NetworkPolicy
+      name: singleuser
+    path: singleuser-np-patch.yaml
