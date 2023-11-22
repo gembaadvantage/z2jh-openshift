@@ -4,14 +4,8 @@
 proxy:
   service:
     type: ClusterIP
-  # https:  # Uncomment and configure to enable HTTPS.
-  #   enabled: true
-  #   type: letsencrypt
-  #   hosts:
-  #     - local.jovyan.org
-  #   letsencrypt:
-  #     contactEmail: "jovyan@jupyter.test"
-  #     acmeServer: https://pebble/dir
+  https: # Enable and extend to configure HTTPS.
+    enabled: false
   traefik:
     containerSecurityContext: &security_context
       runAsUser: # let openshift set the value
@@ -41,27 +35,9 @@ hub:
     <<: *security_context
     runAsUser: # let openshift set the value
     runAsGroup: # let openshift set the value
-  livenessProbe:
-    # The livenessProbe's aim to give JupyterHub sufficient time to startup but
-    # be able to restart if it becomes unresponsive for ~5 min.
-    enabled: false
-    initialDelaySeconds: 300
-    periodSeconds: 10
-    failureThreshold: 30
-    timeoutSeconds: 3
-  readinessProbe:
-    # The readinessProbe's aim is to provide a successful startup indication,
-    # but following that never become unready before its livenessProbe fail and
-    # restarts it if needed. To become unready following startup serves no
-    # purpose as there are no other pod to fallback to in our non-HA deployment.
-    enabled: false
-    initialDelaySeconds: 0
-    periodSeconds: 2
-    failureThreshold: 1000
-    timeoutSeconds: 1
 
 singleuser:
-  startTimeout: 1200 # Extend because of large image size.
+  # startTimeout: 1200 # Extend because of large image size.
   uid: # let openshift set the value
   fsGid:
   cloudMetadata:
@@ -90,16 +66,3 @@ scheduling:
       <<: *security_context
       runAsUser: # let openshift set the value
       runAsGroup: # let openshift set the value
-    enabled: true
-    replicas: 2
-    # Can be set too low too not show scoring of scheduled pods, but also too
-    # high to show hex dumps of all network traffic.
-    #
-    # FIXME: Tweak this to include scoring, but exclude hex dumps. 10 includes
-    #        hex dumps. 4 does not include scoring. Trying with 6...
-    logLevel: 6 # 4 by default, 6 for local dev.
-  podPriority:
-    enabled: true
-
-debug:
-  enabled: true
