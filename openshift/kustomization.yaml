@@ -1,6 +1,6 @@
 resources:
   - ../base
-  - create-route-proxy-public.yaml
+  - resource-route-proxy-public.yaml
 
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
@@ -16,16 +16,16 @@ patches:
       version: v1
       kind: NetworkPolicy
       name: proxy
-    path: proxy-np-patch.yaml
+    path: patch-proxy-np.yaml
   - target:
       group: networking.k8s.io
       version: v1
       kind: NetworkPolicy
       name: hub
-    path: hub-np-patch.yaml
+    path: patch-hub-np.yaml
   - target:
       group: networking.k8s.io
       version: v1
       kind: NetworkPolicy
       name: singleuser
-    path: singleuser-np-patch.yaml
+    path: patch-singleuser-np.yaml
