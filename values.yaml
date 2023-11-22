@@ -1,3 +1,6 @@
+# Note: you can amend this values.yaml file to substitute your own custom docker images instead of those
+# provided by the Jupyter project if required.
+
 proxy:
   service:
     type: ClusterIP
@@ -11,8 +14,8 @@ proxy:
   #     acmeServer: https://pebble/dir
   traefik:
     containerSecurityContext: &security_context
-      runAsUser: 1000670008 # nobody user
-      runAsGroup: 65534 # nobody group
+      runAsUser: # let openshift set the value
+      runAsGroup: # let openshift set the value
       allowPrivilegeEscalation: false
       capabilities:
         drop:
@@ -21,32 +24,23 @@ proxy:
       seccompProfile:
         type: RuntimeDefault
   secretSync:
-    image:
-      name: willhgemba/secret-sync
-      tag: latest
     containerSecurityContext:
       <<: *security_context
-      runAsUser: 1000670009 # nobody user
-      runAsGroup: 65534 # nobody group
+      runAsUser: # let openshift set the value
+      runAsGroup: # let openshift set the value
   chp:
-    image:
-      name: willhgemba/configurable-http-proxy
-      tag: latest
     containerSecurityContext:
       <<: *security_context
-      runAsUser: 1000670007 # nobody user
-      runAsGroup: 65534 # nobody group
+      runAsUser: # let openshift set the value
+      runAsGroup: # let openshift set the value
 
 hub:
-  image:
-    name: willhgemba/hub
-    tag: latest
   podSecurityContext:
     fsGroup:
   containerSecurityContext:
     <<: *security_context
-    runAsUser: 1000670006
-    runAsGroup: 2000
+    runAsUser: # let openshift set the value
+    runAsGroup: # let openshift set the value
   livenessProbe:
     # The livenessProbe's aim to give JupyterHub sufficient time to startup but
     # be able to restart if it becomes unresponsive for ~5 min.
@@ -68,14 +62,7 @@ hub:
 
 singleuser:
   startTimeout: 1200 # Extend because of large image size.
-  networkTools:
-    image:
-      name: willhgemba/network-tools
-      tag: latest
-  image:
-    name: willhgemba/scipy-notebook # base-notebook
-    tag: "latest"
-  uid: 1000679998
+  uid: # let openshift set the value
   fsGid:
   cloudMetadata:
     blockWithIptables: false
@@ -83,29 +70,26 @@ singleuser:
 prePuller:
   containerSecurityContext:
     <<: *security_context
-    runAsUser: 1000670003 # nobody user
-    runAsGroup: 1000670000 # nobody group
+    runAsUser: # let openshift set the value
+    runAsGroup: # let openshift set the value
   hook:
-    image:
-      name: willhgemba/image-awaiter
-      tag: latest
     enabled: true
     containerSecurityContext:
       <<: *security_context
-      runAsUser: 1000670004 # nobody user
-      runAsGroup: 1000670000 # nobody group
+      runAsUser: # let openshift set the value
+      runAsGroup: # let openshift set the value
   pause:
     containerSecurityContext:
       <<: *security_context
-      runAsUser: 1000671004
-      runAsGroup: 1000671004
+      runAsUser: # let openshift set the value
+      runAsGroup: # let openshift set the value
 
 scheduling:
   userScheduler:
     containerSecurityContext:
       <<: *security_context
-      runAsUser: 1000670001
-      runAsGroup: 65534
+      runAsUser: # let openshift set the value
+      runAsGroup: # let openshift set the value
     enabled: true
     replicas: 2
     # Can be set too low too not show scoring of scheduled pods, but also too
