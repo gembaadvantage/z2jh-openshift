@@ -15,13 +15,13 @@ It has been designed and tested using [OpenShift Local](https://developers.redha
 #### Patches
 
 - Patch the hub, proxy, and singleuser network policies so that named ports are not used. This is because [named port usage in NetworkPolicies aren't supported by the Weave NET Network Policy Controller (NPC)](https://github.com/weaveworks/weave/issues/3032).
-- Patch the singleuser network policy egress port to the default-dns service, as the default value in the helm chart isn't correct for OpenShift CRC. This problem prevents the singleuser pods from being able to resolve the "hub" service name, which results in termination of the singleuser pods.
-- Patch jupyterhub_config.py configuration file with one that amends thesecurity context for an init container for Openshift. This is run prior to a "singleuser-sample" JupyterHub container starting.
+- Patch the singleuser network policy egress port to the `default-dns` service, as the default value in the helm chart isn't correct for OpenShift CRC. This problem prevents the singleuser pods from being able to resolve the `hub` service name, which results in termination of the singleuser pods.
+- Patch `jupyterhub_config.py` configuration file with one that amends thesecurity context for an init container for Openshift. This is run prior to a `singleuser` JupyterHub container starting.
 
 ### In the values.yaml file I have made the following changes to the Helm Chart
 
 - Harden the security context of each container.
-- Set the runAsUser and runAsGroup values to be empty, this is so that OpenShift generates the UID, GIDs. This is needed because otherwise, it's possible that the defined UID/GID is outside the UID/GID range assigned to the OpenShift project. Please find more information about this [here](https://cloud.redhat.com/blog/a-guide-to-openshift-and-uids).
+- Set the `runAsUser` and `runAsGroup` values to be empty, this is so that OpenShift generates the UID, GIDs. This is needed because otherwise, it's possible that the defined UID/GID is outside the UID/GID range assigned to the OpenShift project. Please find more information about this [here](https://cloud.redhat.com/blog/a-guide-to-openshift-and-uids).
 -
 
 ## How to run
