@@ -2,13 +2,13 @@
 
 This project adapts the Zero to [Jupyterhub Helm chart](https://github.com/jupyterhub/zero-to-jupyterhub-k8s) for Openshift using a custom values file and Kustomize.
 
-It has been designed and tested using [OpenShift Local](https://developers.redhat.com/products/openshift-local/overview) (formally known as Code Ready Containers). So I recommend running this on your local machine using OpenShift local to validate whether or not it meets your usecase.
+It has been designed and tested using [OpenShift Local](https://developers.redhat.com/products/openshift-local/overview) (formally known as Code Ready Containers). So I recommend running this on your local machine using OpenShift local to validate whether or not it meets your use case.
 
 ## Alterations
 
 ### The Kustomizations made are as follows
 
-#### Resouces
+#### Resources
 
 - Create an openshift route for the application's public proxy.
 
@@ -16,7 +16,7 @@ It has been designed and tested using [OpenShift Local](https://developers.redha
 
 - Patch the hub, proxy, and singleuser network policies so that named ports are not used. This is because [named port usage in NetworkPolicies aren't supported by the Weave NET Network Policy Controller (NPC)](https://github.com/weaveworks/weave/issues/3032).
 - Patch the singleuser network policy egress port to the `default-dns` service, as the default value in the helm chart isn't correct for OpenShift CRC. This problem prevents the singleuser pods from being able to resolve the `hub` service name, which results in termination of the singleuser pods.
-- Patch `jupyterhub_config.py` configuration file with one that amends thesecurity context for an init container for Openshift. This is run prior to a `singleuser` JupyterHub container starting.
+- Patch `jupyterhub_config.py` configuration file with one that amends the security context for an init container for Openshift. This is run prior to a `singleuser` JupyterHub container starting.
 
 ### In the values.yaml file I have made the following changes to the Helm Chart
 
