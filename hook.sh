@@ -1,4 +1,4 @@
 #!/bin/bash
 cat <&0 >./base/resources.yaml
-kubectl kustomize ./openshift/
+oc kustomize ./openshift/
 rm ./base/resources.yaml
