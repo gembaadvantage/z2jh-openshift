@@ -2,7 +2,7 @@
 
 This project adapts the Zero to [Jupyterhub Helm chart](https://github.com/jupyterhub/zero-to-jupyterhub-k8s) for Openshift using a custom values file and Kustomize.
 
-It has been designed and tested using [OpenShift Local](https://developers.redhat.com/products/openshift-local/overview) (formally known as Code Ready Containers).
+It has been designed and tested using [OpenShift Local](https://developers.redhat.com/products/openshift-local/overview) (formally known as Code Ready Containers). So I recommend running this on your local machine using OpenShift local to validate whether or not it meets your usecases.
 
 ## Alterations
 
